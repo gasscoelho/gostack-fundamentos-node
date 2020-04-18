@@ -37,30 +37,26 @@ class TransactionsRepository {
 
     // Check if object is empty
     if (isObjectEmpty(transactionsGroupByType)) {
-      return { income: 0, outcome: 0, total: 0 };
+      return { income, outcome, total };
     }
 
-    // Check if income was grouped
-    if (transactionsGroupByType.income) {
-      // Use reducer to sum accumulated values of income
-      income = transactionsGroupByType.income.reduce(
-        (accumulator, currentValue) => {
-          return accumulator + currentValue.value;
-        },
-        0,
-      );
-    }
-
-    // Check if outcome was grouped
-    if (transactionsGroupByType.outcome) {
-      // Use reducer to sum accumulated values of outcome
-      outcome = transactionsGroupByType.outcome.reduce(
-        (accumulator, currentValue) => {
-          return accumulator + currentValue.value;
-        },
-        0,
-      );
-    }
+    // Calculate income | outcome
+    Object.entries(transactionsGroupByType).forEach(([key, value]) => {
+      switch (key) {
+        case 'income':
+          income = value.reduce((accumulator, currentValue) => {
+            return accumulator + currentValue.value;
+          }, 0);
+          break;
+        case 'outcome':
+          outcome = value.reduce((accumulator, currentValue) => {
+            return accumulator + currentValue.value;
+          }, 0);
+          break;
+        default:
+          break;
+      }
+    });
 
     // Calculate the total value
     total = income - outcome;
