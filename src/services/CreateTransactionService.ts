@@ -18,6 +18,11 @@ class CreateTransactionService {
   public execute({ title, type, value }: Request): Transaction {
     const { total } = this.transactionsRepository.getBalance();
 
+    // Check if type is income | outcome
+    if (!['income', 'outcome'].includes(type)) {
+      throw Error('type must be income or outcome');
+    }
+
     // Check the balance before create a new transaction
     if (type === 'outcome' && value > total) {
       throw Error(
